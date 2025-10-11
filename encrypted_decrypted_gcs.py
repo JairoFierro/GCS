@@ -12,14 +12,12 @@ from pymavlink.dialects.v20 import common as mavlink2
 
 try:
     from ascon import ascon_encrypt, ascon_decrypt
-    print("[GCS] ✓ pyascon cargado")
+    print("[GCS] pyascon cargado")
 except ImportError:
-    print("[GCS] ❌ Error: instalar con 'pip install ascon'")
+    print("[GCS] Error: instalar con 'pip install ascon'")
     exit(1)
 
-# ============================================
-# CONFIGURACIÓN
-# ============================================
+# Mismo que en C++
 
 ASCON_KEY = bytes([
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -30,9 +28,7 @@ IV_BOOT = 0x1122334455667788
 
 MAVLINK_IFLAG_ENCRYPTED = 0x02
 
-# ============================================
-# UTILIDADES
-# ============================================
+
 
 def construct_nonce(iv_boot, sysid, compid, seq):
     """Construye nonce de 16 bytes como en C++"""
@@ -42,10 +38,6 @@ def construct_nonce(iv_boot, sysid, compid, seq):
     nonce[9] = compid
     nonce[10] = seq
     return bytes(nonce)
-
-# ============================================
-# GCS CON CIFRADO/DESCIFRADO
-# ============================================
 
 class EncryptedGCS:
     def __init__(self, connection_string='tcp:127.0.0.1:5760'):
@@ -60,9 +52,7 @@ class EncryptedGCS:
         print(f"[GCS] Key: {self.key.hex()}")
         print(f"[GCS] IV_boot: 0x{self.iv_boot:016X}")
     
-    # ════════════════════════════════════════
-    # DESCIFRADO (recibir telemetría)
-    # ════════════════════════════════════════
+
     
     def decrypt_message(self, msg_bytes, sysid, compid, seq):
         """Descifra mensaje recibido de ArduPilot"""
@@ -81,19 +71,15 @@ class EncryptedGCS:
                 ciphertext=msg_bytes
             )
             
-            print(f"║ ✅ ÉXITO ({len(plaintext)} bytes)")
-            print(f"╚════════════════════════════════════════╝")
+            print(f" ÉXITO ({len(plaintext)} bytes)")
             
             return plaintext
             
         except Exception as e:
-            print(f"║ ❌ ERROR: {e}")
-            print(f"╚════════════════════════════════════════╝")
+            print(f" ERROR: {e}")
             return None
     
-    # ════════════════════════════════════════
     # CIFRADO (enviar comandos)
-    # ════════════════════════════════════════
     
     def encrypt_and_send(self, msg):
         """
@@ -129,9 +115,8 @@ class EncryptedGCS:
                 plaintext=plaintext
             )
             
-            print(f"║ len ciphertext: {len(ciphertext)} bytes (+ 16 tag)")
-            print(f"║ ✅ CIFRADO EXITOSO")
-            print(f"╚════════════════════════════════════════╝")
+            print(f" len ciphertext: {len(ciphertext)} bytes (+ 16 tag)")
+            print(f" CIFRADO EXITOSO")
             
             # Reconstruir mensaje MAVLink con payload cifrado
             # NOTA: Esto es complejo con PyMAVLink
@@ -141,16 +126,13 @@ class EncryptedGCS:
             # (implementación completa requiere manipular bytes raw)
             self.mav.mav.send(msg)
             
-            print("[GCS] ⚠️  Mensaje enviado SIN CIFRAR (implementación pendiente)")
-            print("[GCS]     Para cifrar realmente, se necesita manipular bytes raw")
+            print("[GCS] Mensaje enviado SIN CIFRAR (implementación pendiente)")
+            print("[GCS] Para cifrar realmente, se necesita manipular bytes raw")
             
         except Exception as e:
-            print(f"║ ❌ ERROR AL CIFRAR: {e}")
-            print(f"╚════════════════════════════════════════╝")
+            print(f" ERROR AL CIFRAR: {e}")
     
-    # ════════════════════════════════════════
     # COMANDOS DE EJEMPLO
-    # ════════════════════════════════════════
     
     def arm(self):
         """Armar el dron"""
