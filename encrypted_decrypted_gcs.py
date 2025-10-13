@@ -270,12 +270,12 @@ def main():
         return
     
     # Ejemplo: enviar comando
-    # gcs.arm()
-    # time.sleep(1)
-    # gcs.set_mode('GUIDED')
+    gcs.arm()
+    time.sleep(1)
+    gcs.set_mode('GUIDED')
     
     # Recibir telemetría
-    gcs.receive_loop()
+    #gcs.receive_loop()
 
 if __name__ == "__main__":
     main()
