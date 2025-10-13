@@ -264,7 +264,7 @@ def main():
     print("  GCS con Cifrado ASCON-128 COMPLETO")
     print("=" * 60)
     
-    gcs = EncryptedGCS('tcp:127.0.0.1:5760')
+    gcs = EncryptedGCS('udp:127.0.0.1:14551')
     
     if not gcs.wait_heartbeat():
         return
