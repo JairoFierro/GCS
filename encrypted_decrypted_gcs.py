@@ -11,8 +11,8 @@ from pymavlink import mavutil
 from pymavlink.dialects.v20 import common as mavlink2
 
 try:
-    from ascon import ascon_encrypt, ascon_decrypt
-    print("[GCS] pyascon cargado")
+    from ascon import encrypt as ascon_encrypt, decrypt as ascon_decrypt
+    print("[GCS] ascon cargado")
 except ImportError:
     print("[GCS] Error: instalar con 'pip install ascon'")
     exit(1)
